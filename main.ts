@@ -1,19 +1,16 @@
 export async function itunes(path: string, query: string): Promise<Response> {
-  let itunesResponse = null
+  let itunesResponse: Response | undefined
   let data = ''
   switch (path.toLowerCase()) {
     case '/itunes/search':
       itunesResponse = await fetch('https://itunes.apple.com/search' + query)
-      if (itunesResponse.status === 200) {
-        data = await itunesResponse.text()
-      }
       break
     case '/itunes/lookup':
       itunesResponse = await fetch('https://itunes.apple.com/lookup' + query)
-      if (itunesResponse.status === 200) {
-        data = await itunesResponse.text()
-      }
       break
+  }
+  if (itunesResponse?.status === 200) {
+    data = await itunesResponse.text()
   }
   const response = new Response(data)
   response.headers.set('Content-Type', 'text/json')
@@ -32,8 +29,8 @@ if (import.meta.main) {
     switch (url.pathname.toLowerCase()) {
       case '/itunes/search':
       case '/itunes/lookup':
-        return itunes(url.pathname, url.search)
+        return await itunes(url.pathname, url.search)
     }
-    return new Response("Hello, World!");
+    return new Response("Build by https://yanet.app/");
   })
 }
